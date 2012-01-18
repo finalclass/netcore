@@ -70,7 +70,7 @@ abstract class Model
         if ($result === false) {
             return null;
         }
-        $data = \Zend_Json::decode($result);
+        $data = json_decode($result, true);
         $className = get_called_class();
         $model = new $className();
         $model->fromArray($data);
@@ -98,7 +98,7 @@ abstract class Model
             if (!is_file($filePath) || substr($filePath, strlen($filePath) - 5) != '.json') {
                 continue;
             }
-            $data = \Zend_Json::decode(file_get_contents($filePath));
+            $data = \json_decode(file_get_contents($filePath), true);
             $className = get_called_class();
             $model = new $className();
             $model->fromArray($data);
@@ -107,10 +107,22 @@ abstract class Model
         return static::sort($array, $sortBy, $direction);
     }
 
-//    abstract protected function setSortByAndDirection() {
-//        
-//    }
-
+    /**
+     * @static
+     * @param \Closure $f
+     * @return Model[]
+     */
+    static public function findByFunction($f)
+    {
+        $all = self::findAll();
+        $out = array();
+        foreach($all as $record) {
+            if($f($record)) {
+                $out[] = $record;
+            }
+        }
+        return $out;
+    }
 
     /**
      *
@@ -197,7 +209,7 @@ abstract class Model
             $this->data['id'] = $this->generateUniqueId($field);
         }
 
-        $stringToSave = \Zend_Json::prettyPrint(\Zend_Json::encode($this->data), array('indent' => '  '));
+        $stringToSave = json_encode($this->data);//, array('indent' => '  ');
         file_put_contents((static::getDir() . DIRECTORY_SEPARATOR . $this->data['id'] . '.json'), $stringToSave);
         return $this->data['id'];
     }

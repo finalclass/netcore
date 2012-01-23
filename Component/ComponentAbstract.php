@@ -117,26 +117,12 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
 
     /**
      * @param \NetCore\Component\ComponentAbstract|\Closure|string $variable
+     * @param null $customArgument
      * @return string
      */
     protected function renderVariable($variable, $customArgument = null)
     {
-        $out = '';
-
-        if($variable instanceof ComponentAbstract) {
-            $out .= $variable;
-        } else if(is_string($variable)) {
-            $out .= $variable;
-        } else if(is_callable($variable)) {
-            ob_start();
-            $arguments = array($this);
-            if($customArgument) {
-                $arguments[] = $customArgument;
-            }
-            $out .= call_user_func_array($variable, $arguments);
-            $out .= ob_get_clean();
-        }
-        return $out;
+        return \NetCore\Renderer::renderVariable($variable, $customArgument, $this);
     }
 
     /**

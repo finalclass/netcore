@@ -27,7 +27,7 @@ class Title extends ComponentAbstract
         return new Title();
     }
 
-    protected function render()
+    public function render()
     {
         return '<title>' . join($this->getSeparator(), $this->titles) . '</title>';
     }

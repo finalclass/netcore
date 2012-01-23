@@ -12,7 +12,7 @@ use \NetCore\Component\Form\FormElementAbstract;
 class TextInput extends FormElementAbstract
 {
 
-    protected function render()
+    public function render()
     {
         echo '<input type="text" '
              . $this->renderTagAttributes(array('name', 'class', 'id', 'value', 'style'))

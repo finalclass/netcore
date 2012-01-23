@@ -10,7 +10,7 @@ use \NetCore\Component\Form\FormElementAbstract;
 class Password extends FormElementAbstract
 {
 
-    protected function render()
+    public function render()
     {
         echo '<input type="password" '
              . $this->renderTagAttributes(array('name', 'class', 'id', 'value', 'style'))

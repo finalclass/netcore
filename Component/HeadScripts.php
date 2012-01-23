@@ -22,7 +22,7 @@ class HeadScripts extends Tag
         $userScript = $this->userScript;
     }
 
-    protected function render()
+    public function render()
     {
         foreach($this->scriptFiles as $file) {
             echo '<script type="text/javascript" src="' . $file . '" ></script>';

@@ -25,7 +25,7 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     /**
      * @return void
      */
-    protected function render()
+    public function render()
     {
         
     }

@@ -14,7 +14,7 @@ class Tabs extends Tag
 
     protected $tabs = array();
 
-    protected function render()  {?>
+    public function render()  {?>
 
         <div <?php echo $this->renderTagAttributes($this->defaultAttributes); ?>>
             <ul class="<?php echo $this->getClass(); ?>_labels">

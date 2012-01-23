@@ -19,7 +19,7 @@ class Table extends Tag
     /**
      * @return void
      */
-    protected function render() {
+    public function render() {
         ?>
 <table <?php echo $this->renderTagAttributes(array('id', 'class', 'padding', 'spacing')); ?>>
     <thead>

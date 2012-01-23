@@ -21,7 +21,7 @@ class Container extends ComponentAbstract
     /**
      * @return string
      */
-    protected function render()
+    public function render()
     {
         return join(PHP_EOL, $this->children);
     }

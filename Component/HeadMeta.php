@@ -14,7 +14,7 @@ class HeadMeta extends Tag
 
     private $metas = array();
 
-    protected function render()
+    public function render()
     {
         foreach($this->metas as $name=>$meta) {
             $content = empty($meta['content']) ? '' : ' content="' . $meta['content'] . '" ';

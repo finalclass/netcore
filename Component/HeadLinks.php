@@ -16,7 +16,7 @@ class HeadLinks extends Tag
 
     private $styles = '';
 
-    protected function render()
+    public function render()
     {
         foreach($this->files as $file) {
             echo '<link rel="stylesheet" type="text/css" href="' . $file. '" />';

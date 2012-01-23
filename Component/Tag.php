@@ -37,7 +37,7 @@ class Tag extends Container
         parent::__construct($optionsOrTagName);
     }
 
-    protected function render()
+    public function render()
     {
         $attributes = $this->renderTagAttributes($this->getDefaultAttributes());
         $out = '<' . $this->getTagName() . $attributes . ' ' . $this->renderData() . '>' . PHP_EOL;

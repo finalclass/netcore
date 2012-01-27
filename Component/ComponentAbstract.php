@@ -60,20 +60,37 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     }
 
     /**
+     * @param string $value
+     * @return \NetCore\Component\ComponentAbstract
+     */
+    public function setSkin($value)
+    {
+        $this->options['skin'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSkin()
+    {
+        if(empty($this->options['skin'])) {
+            return $this->getSkinPath()
+                            . DIRECTORY_SEPARATOR
+                            . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this))
+                            . '.phtml';
+        } else {
+            return $this->getSkinPath() . DIRECTORY_SEPARATOR . $this->options['skin'];
+        }
+    }
+
+    /**
      * @param array $options
      */
     public function __construct($options = array()) {
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_CONSTRUCT));
         parent::__construct($options);
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::AFTER_CONSTRUCT));
-    }
-
-    private function getComponentSkinPath()
-    {
-        return $this->getSkinPath()
-                . DIRECTORY_SEPARATOR
-                . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this))
-                . '.phtml';
     }
 
     /**
@@ -86,9 +103,9 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
         $out = '';
         if($view) {
             $out .= $this->renderVariable($view);
-        } else if(file_exists($this->getComponentSkinPath())) {
+        } else if(file_exists($this->getSkin())) {
             ob_start();
-            include $this->getComponentSkinPath();
+            include $this->getSkin();
             $out .= ob_get_clean();
         } else {
             $out .= $this->renderVariable(array($this, 'render'));

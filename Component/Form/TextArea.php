@@ -12,7 +12,25 @@ use \NetCore\Component\Form\FormElementAbstract;
 class TextArea extends FormElementAbstract
 {
 
-    protected $defaultAttributes = array('id', 'class', 'style', 'name', 'cols', 'rows');
+    protected $defaultAttributes = array('id', 'class', 'style', 'name', 'cols', 'rows', 'placeholder');
+
+    /**
+     * @param string $value
+     * @return \NetCore\Component\Form\TextArea
+     */
+    public function setPlaceholder($value)
+    {
+        $this->options['placeholder'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaceholder()
+    {
+        return empty($this->options['placeholder']) ? '' : $this->options['placeholder'];
+    }
 
     public function getTagName()
     {

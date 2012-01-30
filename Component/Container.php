@@ -11,12 +11,16 @@ use \NetCore\Component\ComponentAbstract;
  */
 class Container extends ComponentAbstract
 {
-    
 
     /**
      * @var \NetCore\Component\ComponentAbstract[]
      */
     protected $children = array();
+
+    public function __construct($options = array())
+    {
+        parent::__construct($options);
+    }
 
     /**
      * @return string
@@ -33,18 +37,19 @@ class Container extends ComponentAbstract
      */
     public function addChild(ComponentAbstract $child, $childName = '')
     {
-        if(empty($childName)) {
+        if (empty($childName)) {
             $this->children[] = $child;
         } else {
             $this->children[$childName] = $child;
         }
-        
+
         $child->setParent($this);
         return $this;
     }
 
-    public function setChildren(array $children) {
-        foreach($children as $childName => $child) {
+    public function setChildren(array $children)
+    {
+        foreach ($children as $childName => $child) {
             $this->addChild($child, $childName);
         }
         return $this;
@@ -57,7 +62,7 @@ class Container extends ComponentAbstract
 
     public function removeChild($childName)
     {
-        if(isset($this->children[$childName])) {
+        if (isset($this->children[$childName])) {
             unset($this->children[$childName]);
         }
         return $this;
@@ -79,10 +84,10 @@ class Container extends ComponentAbstract
 
     public function recursiveDispatchEvent(\NetCore\Event\Event $event)
     {
-        foreach($this->getChildren() as $child) {
-            if($child instanceof Container) {
+        foreach ($this->getChildren() as $child) {
+            if ($child instanceof Container) {
                 $child->recursiveDispatchEvent($event);
-            } else if($child instanceof ComponentAbstract) {
+            } else if ($child instanceof ComponentAbstract) {
                 $child->dispatchEvent($event);
             }
         }
@@ -98,5 +103,5 @@ class Container extends ComponentAbstract
     {
         $this->addChild($value, $name);
     }
-    
+
 }

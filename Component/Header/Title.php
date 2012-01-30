@@ -1,6 +1,6 @@
 <?php
 
-namespace NetCore\Component;
+namespace NetCore\Component\Header;
 
 use \NetCore\Component\ComponentAbstract;
 

@@ -12,10 +12,28 @@ use \NetCore\Component\Form\FormElementAbstract;
 class TextInput extends FormElementAbstract
 {
 
+    /**
+     * @param string $value
+     * @return \NetCore\Component\Form\TextInput
+     */
+    public function setPlaceholder($value)
+    {
+        $this->options['placeholder'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlaceholder()
+    {
+        return empty($this->options['placeholder']) ? '' : $this->options['placeholder'];
+    }
+
     public function render()
     {
         echo '<input type="text" '
-             . $this->renderTagAttributes(array('name', 'class', 'id', 'value', 'style'))
+             . $this->renderTagAttributes(array('name', 'class', 'id', 'value', 'style', 'placeholder'))
              . '/>';
     }
 

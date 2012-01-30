@@ -14,6 +14,8 @@ class ComponentEvent extends Event
 
     const BEFORE_CONSTRUCT = 'before_construct';
     const AFTER_CONSTRUCT = 'after_construct';
+    const BEFORE_INITIALIZE = 'before_initialize';
+    const AFTER_INITIALIZE = 'after_initialize';
     const BEFORE_RENDER = 'before_render';
     const AFTER_RENDER = 'after_render';
     const BEFORE_SET_PARENT = 'before_set_parent';

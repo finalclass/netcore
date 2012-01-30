@@ -88,10 +88,22 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
      * @param array $options
      */
     public function __construct($options = array()) {
-        $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_CONSTRUCT));
         parent::__construct($options);
+
+        $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_CONSTRUCT));
+        $this->construct();
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::AFTER_CONSTRUCT));
+
+        $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_INITIALIZE));
+        $this->init();
+        $this->dispatchEvent(new ComponentEvent(ComponentEvent::AFTER_INITIALIZE));
     }
+
+    protected function construct() {}
+
+    protected function init() {}
+
+    protected function beforeRender() {}
 
     /**
      * @return string
@@ -99,6 +111,7 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     public function __toString()
     {
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_RENDER));
+        $this->beforeRender();
         $view = $this->getView();
         $out = '';
         if($view) {

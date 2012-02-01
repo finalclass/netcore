@@ -152,7 +152,7 @@ class Loader
 
     public function find($path)
     {
-        $pathExploded = explode('/', str_replace(array('\\', '/', '_'), '/', $path));
+        $pathExploded = explode('/', str_replace(array('\\', '/'), '/', $path));
         $fullPath = current($pathExploded) == ''
                 ? $pathExploded : array_merge($this->currentPathExploded, $pathExploded);
         $resolvedPath = array();

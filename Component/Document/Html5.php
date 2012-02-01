@@ -46,7 +46,6 @@ class Html5 extends Container
 {
     public function __construct($options = array())
     {
-
         $this->keywords = new Keywords();
         $this->styleSheets = new StyleSheets();
         $this->scripts = new Scripts();

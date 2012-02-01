@@ -63,13 +63,20 @@ class Loader
         'jpeg' => 'image/jpg',
         'jpg' => 'image/jpg',
         'css' => 'text/css',
-        'js' => 'application/javascript'
+        'js' => 'application/javascript',
+        'ttf' => 'application/octet-stream',
+        'otf' => 'application/octet-stream',
+        'eot' => 'application/vnd.ms-fontobject',
+        'html' => 'text/html',
+        'htm' => 'text/html',
+        'swf' => 'application/x-shockwave-flash',
     );
 
     static private $staticResourceTypes = array(
         'pdf', 'exe', 'zip', 'doc', 'xls',
         'ppt', 'gif', 'png', 'jpeg', 'jpg',
-        'css', 'js'
+        'css', 'js', 'ttf', 'eot', 'otf',
+        'html', 'htm', 'swf'
     );
 
     private $roles = array();
@@ -152,6 +159,9 @@ class Loader
 
     public function find($path)
     {
+        if(is_object($path)) {
+            $path = '/' . get_class($path);
+        }
         $pathExploded = explode('/', str_replace(array('\\', '/'), '/', $path));
         $fullPath = current($pathExploded) == ''
                 ? $pathExploded : array_merge($this->currentPathExploded, $pathExploded);
@@ -175,7 +185,7 @@ class Loader
      */
     public function setAllowed($value)
     {
-        $namespace = $this->getCurrentPathString();
+        $namespace = $this->getPath();
         if (!isset($this->params[$namespace])) {
             $this->params[$namespace] = array();
         }
@@ -185,7 +195,7 @@ class Loader
 
     public function addOptions($options)
     {
-        $namespace = $this->getCurrentPathString();
+        $namespace = $this->getPath();
         if (!isset($this->params[$namespace])) {
             $this->params[$namespace] = array();
         }
@@ -202,10 +212,10 @@ class Loader
 
     public function exists()
     {
-        return file_exists($this->dir . '/' . $this->getCurrentPathString());
+        return file_exists($this->dir . '/' . $this->getPath());
     }
 
-    public function getCurrentPathString()
+    public function getPath()
     {
         return '/' . join('/', $this->currentPathExploded);
     }
@@ -216,7 +226,7 @@ class Loader
         $allowed = array();
 
         foreach ($this->params as $namespace => $params) {
-            $currentPath = $this->getCurrentPathString();
+            $currentPath = $this->getPath();
 
             if (strpos($currentPath, $namespace) === 0) {
                 $len = strlen($namespace);
@@ -270,8 +280,8 @@ class Loader
         if (!$this->isAnyRoleAllowed($config['allowed'])) {
             throw new \Exception('Not Allowed', 404);
         }
-        $this->loadClass();
         $className = '\\' . join('\\', $this->currentPathExploded);
+        self::loadClass($this->getDir(), $className);
         return new $className($config['options']);
     }
 
@@ -315,9 +325,9 @@ class Loader
         return array_search($this->getExtension(), self::$staticResourceTypes) !== false;
     }
 
-    private function getFullPath()
+    public function getFullPath()
     {
-        $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir . $this->getCurrentPathString());
+        $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir . $this->getPath());
         $path = realpath($path);
         return $path;
     }
@@ -356,6 +366,7 @@ class Loader
             ob_clean();
             flush();
             readfile($fullPath);
+            exit;
         } else {
             die('File Not Found');
         }

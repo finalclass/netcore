@@ -75,11 +75,13 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     public function getSkin()
     {
         if(empty($this->options['skin'])) {
+            return '';
             return $this->getSkinPath()
                             . DIRECTORY_SEPARATOR
                             . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this))
                             . '.phtml';
         } else {
+            return $this->options['skin'];
             return $this->getSkinPath() . DIRECTORY_SEPARATOR . $this->options['skin'];
         }
     }

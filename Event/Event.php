@@ -12,15 +12,30 @@ class Event {
 
     protected $name;
     protected $target;
-        
+    protected $currentTarget;
+    protected $bubble = true;
+
     /**
      * Constructor setting name of the Event
-     * 
-     * @param string $name 
+     *
+     * @param string $name
+     * @param bool $bubble
      */
-    public function __construct($name)
+    public function __construct($name, $bubble = true)
     {
         $this->name=strval($name);
+        $this->bubble = $bubble == true;
+    }
+
+    public function getBubble()
+    {
+        return $this->bubble;
+    }
+
+    public function stopPropagation()
+    {
+        $this->bubble = false;
+        return $this;
     }
 
     /**
@@ -46,11 +61,24 @@ class Event {
     /**
      * Function sets target
      * 
-     * @param string $target 
+     * @param string $target
+     * @return \NetCore\Event\Event
      */
     public function setTarget($target)
     {
         $this->target=$target;
+        return $this;
+    }
+
+    public function setCurrentTarget($curTarget)
+    {
+        $this->currentTarget = $curTarget;
+        return $this;
+    }
+
+    public function getCurrentTarget()
+    {
+        return $this->currentTarget;
     }
 
 }

@@ -31,6 +31,19 @@ class Container extends ComponentAbstract
     }
 
     /**
+     * @param string $value
+     * @return \NetCore\Component\ComponentAbstract
+     */
+    public function setStage($value)
+    {
+        parent::setStage($value);
+        foreach($this->children as $child) {
+            $child->setStage($value);
+        }
+        return $this;
+    }
+
+    /**
      * @param ComponentAbstract $child
      * @param string $childName
      * @return Container
@@ -101,7 +114,11 @@ class Container extends ComponentAbstract
 
     public function __set($name, $value)
     {
-        $this->addChild($value, $name);
+        if ($value instanceof ComponentAbstract) {
+            $this->addChild($value, $name);
+        } else {
+            $this->$name = $value;
+        }
     }
 
 }

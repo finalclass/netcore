@@ -21,9 +21,10 @@ class StaticEventDispatcher
      * @param object $target
      * @param $eventName
      * @param $listener
+     * @param bool $targetPhase
      * @return bool
      */
-    static public function addEventListenerToObject($target, $eventName, $listener)
+    static public function addEventListenerToObject($target, $eventName, $listener, $targetPhase = true)
     {
         if (!is_callable($listener)) {
             throw new ListenerNotCallable();
@@ -33,7 +34,7 @@ class StaticEventDispatcher
             return false;
         }
         $targetListeners = self::getObjectListenersByEventName($target, $eventName);
-        $targetListeners[] = $listener;
+        $targetListeners[] = array($listener, $targetPhase);
         self::setObjectListenersByEventName($target, $eventName, $targetListeners);
         return true;
     }
@@ -59,10 +60,25 @@ class StaticEventDispatcher
      */
     static public function dispatchEventOnObject($target, Event $event)
     {
-        $event->setTarget($target);
+        $event->setCurrentTarget($target);
+
+        if(!$event->getTarget()) {
+            $event->setTarget($target);
+        }
         $targetListeners = self::getObjectListenersByEventName($target, $event->getName());
-        foreach ($targetListeners as $listener) {
-            call_user_func($listener, $event);
+        foreach ($targetListeners as $listenerDefinition) {
+            $listener = $listenerDefinition[0];
+            $targetPhase = $listenerDefinition[1];
+            if( ($targetPhase && $event->getTarget() == $event->getCurrentTarget()) || !$targetPhase) {
+                call_user_func($listener, $event);
+            }
+        }
+        //Bublink
+        if ($event->getBubble() && method_exists($target, 'getParent')) {
+            $parent = $target->getParent();
+            if($parent) {
+                self::dispatchEventOnObject($parent, $event);
+            }
         }
         return !empty($targetListeners);
     }

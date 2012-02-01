@@ -122,7 +122,7 @@ class Script extends ComponentAbstract
      */
     public function setSrc($value)
     {
-        $this->options['src'] = $value;
+        $this->options['src'] = (string)$value;
         return $this;
     }
 

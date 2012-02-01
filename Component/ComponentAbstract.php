@@ -65,7 +65,7 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
      */
     public function setSkin($value)
     {
-        $this->options['skin'] = $value;
+        $this->options['skin'] = (string)$value;
         return $this;
     }
 
@@ -76,13 +76,8 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     {
         if(empty($this->options['skin'])) {
             return '';
-            return $this->getSkinPath()
-                            . DIRECTORY_SEPARATOR
-                            . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this))
-                            . '.phtml';
         } else {
             return $this->options['skin'];
-            return $this->getSkinPath() . DIRECTORY_SEPARATOR . $this->options['skin'];
         }
     }
 
@@ -165,6 +160,10 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     {
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_SET_PARENT));
         $this->parent = $parent;
+        $stage = $parent->getStage();
+        if($stage) {
+            $this->setStage($stage);
+        }
         $this->dispatchEvent(new ComponentEvent(ComponentEvent::AFTER_SET_PARENT));
     }
 
@@ -174,6 +173,26 @@ abstract class ComponentAbstract extends ConfigurableEventDispatcher
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * @param string $value
+     * @return \NetCore\Component\ComponentAbstract
+     */
+    public function setStage($value)
+    {
+        $this->dispatchEvent(new ComponentEvent(ComponentEvent::BEFORE_SET_STAGE));
+        $this->options['stage'] = $value;
+        $this->dispatchEvent(new ComponentEvent(ComponentEvent::AFTER_SET_STAGE));
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStage()
+    {
+        return empty($this->options['stage']) ? '' : $this->options['stage'];
     }
 
     /**

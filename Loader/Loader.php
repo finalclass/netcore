@@ -25,6 +25,7 @@ SOFTWARE.
 namespace NetCore;
 
 use \NetCore\Utils\ArrayUtils;
+use \NetCore\Loader\Exception\NotAllowed;
 
 /**
  * @author: Sel <s@finalclass.net>
@@ -179,12 +180,20 @@ class Loader
         return $this;
     }
 
+    public function __toString()
+    {
+        return $this->isStaticResource() ? $this->getPath() : $this->getFullPath();
+    }
+
     /**
      * @param string $value
      * @return \NetCore\Loader
      */
     public function setAllowed($value)
     {
+        if(!is_array($value)) {
+            $value = array($value);
+        }
         $namespace = $this->getPath();
         if (!isset($this->params[$namespace])) {
             $this->params[$namespace] = array();
@@ -278,7 +287,7 @@ class Loader
     {
         $config = $this->config();
         if (!$this->isAnyRoleAllowed($config['allowed'])) {
-            throw new \Exception('Not Allowed', 404);
+            throw new NotAllowed();
         }
         $className = '\\' . join('\\', $this->currentPathExploded);
         self::loadClass($this->getDir(), $className);
@@ -335,7 +344,7 @@ class Loader
     public function sendToClient()
     {
         if (!$this->isAllowed()) {
-            throw new \Exception('Not allowed', 404);
+            throw new NotAllowed();
         }
 
         $fullPath = $this->getFullPath();

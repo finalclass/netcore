@@ -101,7 +101,7 @@ class StyleSheet extends ComponentAbstract
      */
     public function setHref($value)
     {
-        $this->options['kref'] = $value;
+        $this->options['kref'] = (string)$value;
         return $this;
     }
 

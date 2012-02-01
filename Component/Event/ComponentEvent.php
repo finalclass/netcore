@@ -21,6 +21,8 @@ class ComponentEvent extends Event
     const BEFORE_SET_PARENT = 'before_set_parent';
     const AFTER_SET_PARENT = 'after_set_parent';
     const CREATION_COMPLETE = 'creation_complete';
+    const BEFORE_SET_STAGE = 'before_set_stage';
+    const AFTER_SET_STAGE = 'after_set_stage';
 
     public function __construct($name)
     {

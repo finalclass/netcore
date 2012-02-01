@@ -43,14 +43,15 @@ class ConfigurableEventDispatcher
     }
 
 
-     /**
+    /**
      * @param $eventName
      * @param $listener
+     * @param bool $targetPhase default true
      * @return EventDispatcher
      */
-    public function addEventListener($eventName, $listener)
+    public function addEventListener($eventName, $listener, $targetPhase = true)
     {
-        StaticEventDispatcher::addEventListenerToObject($this, $eventName, $listener);
+        StaticEventDispatcher::addEventListenerToObject($this, $eventName, $listener, $targetPhase);
         return $this;
     }
 

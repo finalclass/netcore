@@ -217,6 +217,12 @@ class Factory extends OptionsAbstract
         return new $class($options);
     }
 
+    public function setOptions($options = array())
+    {
+        $this->options = array_merge($this->options, $options);
+        return parent::setOptions($options);
+    }
+
     /**
      * @param string $namespace
      * @return Factory

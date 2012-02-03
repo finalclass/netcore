@@ -60,7 +60,9 @@ abstract class FormElementAbstract extends Tag
 
     public function getPostValue()
     {
-        return '';
+        $name = $this->getName();
+        $value = isset($this->options['value']) ? $this->options['value'] : '';
+        return isset($_POST[$name]) ? $_POST[$name] : $value;
     }
 
 

@@ -14,12 +14,12 @@ class Submit extends FormElementAbstract
 
     private $label;
 
-    protected $defaultAttributes = array('type', 'name', 'value', 'id', 'class', 'style');
+    protected $defaultAttributes = array('type', 'name', 'id', 'class', 'style');
 
     public function render()
     {
         ?>
-<input <?php echo $this->renderTagAttributes(array('type', 'name', 'id', 'class', 'style')); ?>
+<input <?php echo $this->renderTagAttributes($this->defaultAttributes); ?>
     value="<?php echo $this->getLabel(); ?>" />
 <input type="hidden"
        name="<?php echo $this->getName(); ?>"
@@ -35,11 +35,6 @@ class Submit extends FormElementAbstract
     public function getType()
     {
         return 'submit';
-    }
-
-    public function getValue()
-    {
-        return $this->getPostValue();
     }
 
     /**

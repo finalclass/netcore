@@ -90,6 +90,24 @@ class Html5 extends Container
         return empty($this->options['meta_description']) ? '' : $this->options['meta_description'];
     }
 
+    /**
+     * @param string $value
+     * @return \NetCore\Component\Document\Html5
+     */
+    public function setFavicon($value)
+    {
+        $this->options['favicon'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFavicon()
+    {
+        return empty($this->options['favicon']) ? 'favicon.ico' : $this->options['favicon'];
+    }
+
 
     public function render()
     {
@@ -101,6 +119,7 @@ class Html5 extends Container
         <?php echo $this->keywords; ?>
         <meta name="description" content="<?php echo $this->getMetaDescription(); ?>">
         <meta charset="utf-8"/>
+        <link rel="icon" href="<?php echo $this->getFavicon(); ?>" />
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
         <?php echo $this->styleSheets; ?>
         <?php echo $this->scripts; ?>

@@ -160,7 +160,7 @@ class Loader
 
     public function find($path)
     {
-        if(is_object($path)) {
+        if (is_object($path)) {
             $path = '/' . get_class($path);
         }
         $pathExploded = explode('/', str_replace(array('\\', '/'), '/', $path));
@@ -191,7 +191,7 @@ class Loader
      */
     public function setAllowed($value)
     {
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             $value = array($value);
         }
         $namespace = $this->getPath();
@@ -227,6 +227,13 @@ class Loader
     public function getPath()
     {
         return '/' . join('/', $this->currentPathExploded);
+    }
+
+    public function getFullPath()
+    {
+        $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir . $this->getPath());
+        $path = realpath($path);
+        return $path;
     }
 
     public function config()
@@ -296,7 +303,7 @@ class Loader
 
     private function isAnyRoleAllowed($allowedRoles)
     {
-        if(!is_array($allowedRoles)) {
+        if (!is_array($allowedRoles)) {
             return true;
         }
         foreach ($allowedRoles as $allowed) {
@@ -334,12 +341,6 @@ class Loader
         return array_search($this->getExtension(), self::$staticResourceTypes) !== false;
     }
 
-    public function getFullPath()
-    {
-        $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir . $this->getPath());
-        $path = realpath($path);
-        return $path;
-    }
 
     public function sendToClient()
     {
@@ -369,7 +370,7 @@ class Loader
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
             header('Cache-Control: private', false); // required for certain browsers
             header('Content-Type: ' . $ctype);
-            header('Content-Disposition: attachment; filename="' . basename($fullPath) . '";');
+            //header('Content-Disposition: attachment; filename="' . basename($fullPath) . '";');
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: ' . $fsize);
             ob_clean();

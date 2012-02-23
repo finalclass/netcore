@@ -50,6 +50,11 @@ class Reader
         return (string) $this->target;
     }
 
+    public function toString()
+    {
+        return $this->getString();
+    }
+
     public function trimStripTags()
     {
         return strip_tags(trim($this->getString()));

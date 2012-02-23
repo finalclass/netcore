@@ -15,6 +15,8 @@ class Router
      */
     private $routes = array();
 
+    private $domainRoutes = array();
+
     /**
      * @var \NetCore\Router\Route[]
      */
@@ -27,7 +29,7 @@ class Router
 
     public function addRoute($name, $pattern, $operations = array(), $params = array())
     {
-        if(isset($this->routes[$name])) {
+        if (isset($this->routes[$name])) {
             throw new RouteWithSameNameExists('Route ' . $name . ' already exists');
         }
         $this->routes[$name] = new Route($name, $pattern, $operations, $params);
@@ -61,7 +63,7 @@ class Router
 
     public function findRoute($params)
     {
-        if($this->sortedByNumberOfParams == null) {
+        if ($this->sortedByNumberOfParams == null) {
             $this->rebuildSortedByNumberOfParams();
         }
 
@@ -76,12 +78,13 @@ class Router
     private function rebuildSortedByNumberOfParams()
     {
         $this->sortedByNumberOfParams = $this->routes;
-        usort($this->sortedByNumberOfParams, function(Route $a, Route $b) {
+        usort($this->sortedByNumberOfParams, function(Route $a, Route $b)
+        {
             $aParamsQuantity = count($a->getParamsFromPattern());
             $bParamsQuantity = count($b->getParamsFromPattern());
-            if($aParamsQuantity > $bParamsQuantity) {
+            if ($aParamsQuantity > $bParamsQuantity) {
                 return -1;
-            } else if($aParamsQuantity < $bParamsQuantity) {
+            } else if ($aParamsQuantity < $bParamsQuantity) {
                 return 1;
             } else {
                 return 0;

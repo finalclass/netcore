@@ -11,20 +11,20 @@ use NetCore\DependencyInjection\Exception\ItemNotFound as ItemNotFoundException;
 class Container
 {
 
-    protected $items = array();
+    protected $options = array();
 
     public function __set($key, $value)
     {
-        $this->items[$key] = $value;
+        $this->options[$key] = $value;
     }
 
     public function __get($key)
     {
-        if (!isset($this->items[$key])) {
+        if (!isset($this->options[$key])) {
             throw new ItemNotFoundException(sprintf('Value "%s" is not defined.', $key));
         }
 
-        return is_callable($this->items[$key]) ? $this->items[$key]($this) : $this->items[$key];
+        return is_callable($this->options[$key]) ? $this->items[$key]($this) : $this->options[$key];
     }
 
     public function share($callable)
@@ -87,7 +87,7 @@ class Container
 
     public function exists($item)
     {
-        return isset($this->items[$item]);
+        return isset($this->options[$item]);
     }
 }
 

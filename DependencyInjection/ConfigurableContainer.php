@@ -11,12 +11,9 @@ use \NetCore\Configurable\StaticConfigurator;
  * Date: 08.09.11
  * Time: 01:06
  *
- * @property \Fc\Action\Helper\Head\Title $title
  */
 class ConfigurableContainer extends Container
 {
-
-    protected $options = array();
 
     public function __construct($options = array())
     {

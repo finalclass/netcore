@@ -32,17 +32,17 @@ class MutualContainer extends DIContainer
 
      public function __get($key)
      {
-        if (!isset($this->items[$key])) {
+        if (!isset($this->options[$key])) {
             $containerClass = get_class($this);
-            $this->items[$key] = new $containerClass();
+            $this->options[$key] = new $containerClass();
         }
-        return is_callable($this->items[$key])
-                ? $this->items[$key]($this) : $this->items[$key];
+        return is_callable($this->options[$key])
+                ? $this->items[$key]($this) : $this->options[$key];
     }
 
     public function get($key)
     {
-        return $this->items[$key];
+        return $this->options[$key];
     }
 
     static public function __callStatic($name, $arguments)
@@ -70,7 +70,7 @@ class MutualContainer extends DIContainer
     public function __call($name, $arguments)
     {
         $item = $this->$name;
-        return is_callable($this->items[$name])
+        return is_callable($this->options[$name])
                 ? call_user_func_array($item, $arguments) : $item;
     }
 

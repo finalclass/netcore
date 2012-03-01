@@ -52,4 +52,21 @@ class Renderer
         return $out;
     }
 
+    static public function removeTag($string, $tagName)
+    {
+        $string = trim($string);
+        $maxLen = strlen($string);
+        $startPosition = 0;
+
+        for($pos = strlen('<' . $tagName)-1; $pos < $maxLen; $pos++) {
+            if(isset($string[$pos]) && $string[$pos] == '>') {
+                $startPosition = $pos+1;
+                break;
+            }
+        }
+
+        $endPosition = strpos($string, '</' . $tagName) + strlen('</' . $tagName);
+        return substr($string, $startPosition, $endPosition - $startPosition);
+    }
+
 }

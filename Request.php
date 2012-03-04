@@ -54,6 +54,9 @@ class Request extends Reader
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
+    /**
+     * @return string current url. Always ends with slash: "/"
+     */
     public function getBaseUrlFromRequest()
     {
         $pageURL = (@$_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
@@ -63,7 +66,15 @@ class Request extends Reader
         else {
             $pageURL .= $_SERVER['SERVER_NAME'];
         }
-        return $pageURL;
+        return rtrim($pageURL, '/') . '/';
+    }
+
+    /**
+     * @return string current url. Always ends with '/'
+     */
+    public function getCurrentUrlFull()
+    {
+        return $this->getBaseUrlFromRequest() . ltrim($_SERVER['REQUEST_URI'], '/');
     }
 
     /**
@@ -125,25 +136,6 @@ class Request extends Reader
             $uri = substr($uri, 0, $questionMarkPosition);
         }
         return array_values(array_filter(explode($separator, $uri)));
-    }
-
-    function getCurrentUrl() {
-        $protocol = 'http';
-        if ($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')) {
-            $protocol .= 's';
-            $protocolPort = $_SERVER['SERVER_PORT'];
-        } else {
-            $protocolPort = 80;
-        }
-        $host = $_SERVER['HTTP_HOST'];
-        $port = $_SERVER['SERVER_PORT'];
-        $request = $_SERVER['PHP_SELF'];
-        $query = substr($_SERVER['argv'][0], strpos($_SERVER['argv'][0], ';') + 1);
-        $out = $protocol . '://' . $host
-                . ($port == $protocolPort ? '' : ':' . $port)
-                . $request
-                . (empty($query) ? '' : '?' . $query);
-        return $out;
     }
 
 }

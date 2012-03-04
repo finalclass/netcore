@@ -32,6 +32,7 @@ namespace NetCore\CouchDB;
 class Document
 {
     protected $data = array();
+    protected $errors = array();
 
     public function getRev()
     {
@@ -65,6 +66,27 @@ class Document
 
     public function toArray()
     {
-        return $this->data;
+        $out = $this->data;
+        if($this->hasErrors()) {
+            $out['errors'] = $this->getErrors();
+        }
+        return $out;
     }
+
+    public function setErrors($errors = array())
+    {
+        $this->errors = (array)$errors;
+        return $this;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    public function hasErrors()
+    {
+        return !empty($this->errors);
+    }
+
 }

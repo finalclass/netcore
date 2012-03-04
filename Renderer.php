@@ -65,7 +65,10 @@ class Renderer
             }
         }
 
-        $endPosition = strpos($string, '</' . $tagName) + strlen('</' . $tagName);
+        $endPosition = strrpos($string, '</' . $tagName);
+        if($endPosition === false) {
+            return substr($string, $startPosition);
+        }
         return substr($string, $startPosition, $endPosition - $startPosition);
     }
 

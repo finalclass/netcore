@@ -52,7 +52,7 @@ class Renderer
         return $out;
     }
 
-    static public function removeTag($string, $tagName)
+    static public function removeTag($tagName, $string)
     {
         $string = trim($string);
         $maxLen = strlen($string);

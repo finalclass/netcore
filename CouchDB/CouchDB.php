@@ -24,6 +24,9 @@ SOFTWARE.
 
 namespace NetCore;
 use \NetCore\CouchDB\Config;
+use \NetCore\Renderer;
+use \NetCore\Configurable\DynamicObject\Writer;
+use \NetCore\CouchDB\Exception\WrongRequest;
 
 /**
  * @author: Sel <s@finalclass.net>
@@ -42,6 +45,7 @@ class CouchDB
     public function __construct(Config $config = null)
     {
         $this->request = new \Zend_Http_Client();
+        $this->request->setHeaders('Content-Type', 'application/json');
         $this->config = $config ? $config : new Config();
     }
 
@@ -69,10 +73,95 @@ class CouchDB
                 . '/' . $cfg->getDatabase();
     }
 
+    public function request($url, $type = \Zend_Http_Client::GET, $document = null)
+    {
+        return json_decode($this->request->setUri($url)
+            ->setRawData($document ? json_encode($document) : '')
+            ->request($type)
+            ->getBody(), true);
+    }
+
     public function get($id)
     {
-        $this->request->setUri($this->getUrl() . '/' . $id);
-        return json_decode($this->request->request(\Zend_Http_Client::GET)->getBody());
+        return $this->request($this->getUrl() . '/' . $id, \Zend_Http_Client::GET);
+    }
+
+    public function post(array $document)
+    {
+        return $this->request($this->getUrl(), \Zend_Http_Client::POST, $document);
+    }
+
+    public function put($id, $rev, array $document)
+    {
+        $document['_rev'] = $rev;
+        return $this->request($this->getUrl() . '/' . $id, \Zend_Http_Client::PUT, $document);
+    }
+
+    /**
+     * Does put or post depending on existance of $document['_id'] and $document['_rev'] property.
+     * After saving set's the $document['_id'] and $document['_rev'] properties
+     *
+     * @param array $document
+     * @return array saved document with _id and _rev set
+     */
+    public function save(array $document)
+    {
+        if(empty($document['_id']) || empty($document['_rev'])) {
+            $response = $this->post($document);
+        } else {
+            $response = $this->put($document['_id'], $document['_rev'], $document);
+        }
+
+        $document['_id'] = $response['id'];
+        $document['_rev'] = $response['rev'];
+        return $document;
+    }
+
+    public function delete($id, $rev)
+    {
+        return $this->request($this->getUrl() . '/' . $id . '?rev=' . $rev, \Zend_Http_Client::DELETE);
+    }
+
+    public function initView(array $document, $designDocumentName = '_design/common', $viewName = null)
+    {
+        if(empty($document)) {
+            throw new \NetCore\CouchDB\Exception\InitViewError('document should have at least one key');
+        }
+        $conditionParts = array();
+        $emitetValues = array(
+            '_id' => '_id: doc._id',
+            '_rev' => '_rev: doc._rev'
+        );
+        foreach($document as $propName => $value) {
+            $conditionParts[] = 'doc.' . $propName;
+            $emitetValues[$propName] = $propName . ': doc.' . $propName;
+        }
+
+        $view =
+        'function(doc) {
+            if(' . join(' && ', $conditionParts) .') {
+                emit(doc._id, { ' . join(', ', $emitetValues) . '});
+            }
+        }';
+
+        $rawExistingDoc= $this->get($designDocumentName);
+        $existingDoc = new Writer($rawExistingDoc);
+
+        if(@$existingDoc->error == 'not_found') {
+            return $this->put($designDocumentName, '', array(
+                'views' => array(
+                    $viewName => array(
+                        'map' => $view
+                    ))));
+        }
+
+        if($existingDoc->error->exists()) {
+            throw new \NetCore\CouchDB\Exception\DesignDocumentError((string)$existingDoc->error);
+        }
+
+        $existingDoc->views->$viewName->map = $view;
+
+        return $this->put($designDocumentName, (string)@$existingDoc->_rev->getString(), $existingDoc->getArray());
     }
 
 

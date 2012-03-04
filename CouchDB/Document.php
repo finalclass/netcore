@@ -59,7 +59,7 @@ class Document
 
     public function fromArray($array)
     {
-        $this->data = $array;
+        $this->data = array_merge($this->data, $array);
         \NetCore\Configurable\StaticConfigurator::setOptions($this, $array);
         return $this;
     }
@@ -67,7 +67,7 @@ class Document
     public function toArray()
     {
         $out = $this->data;
-        if($this->hasErrors()) {
+        if ($this->hasErrors()) {
             $out['errors'] = $this->getErrors();
         }
         return $out;
@@ -87,6 +87,61 @@ class Document
     public function hasErrors()
     {
         return !empty($this->errors);
+    }
+
+    private function initAttachments()
+    {
+        if(!isset($this->data['_attachments'])) {
+            $this->data['_attachments'] = array();
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $value
+     * @return \NetCore\CouchDB\Document
+     */
+    public function setAttachments($value)
+    {
+        $this->initAttachments();
+        $this->data['_attachments'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttachments()
+    {
+        $this->initAttachments();
+        return $this->data['_attachments'];
+    }
+
+    /**
+     * @param $name
+     * @param $filePath
+     * @return \NetCore\CouchDB\Document
+     */
+    public function addAttachment($name, $filePath)
+    {
+        $this->initAttachments();
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $this->data['_attachments'][$name] = array(
+            'content_type' => $finfo->file($filePath),
+            'data' => base64_encode(file_get_contents($filePath))
+        );
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return \NetCore\CouchDB\Document
+     */
+    public function removeAttachment($name)
+    {
+        $this->initAttachments();
+        unset($this->data['_attachments'][$name]);
+        return $this;
     }
 
 }

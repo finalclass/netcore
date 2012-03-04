@@ -112,8 +112,8 @@ class CouchDB
             $response = $this->put($document['_id'], $document['_rev'], $document);
         }
 
-        $document['_id'] = $response['id'];
-        $document['_rev'] = $response['rev'];
+        $document['_id'] = (string) (isset($response['id']) ? $response['id'] : @$response['_id']);
+        $document['_rev'] = (string) (isset($response['rev']) ? $response['rev'] : @$response['_rev']);
         return $document;
     }
 
@@ -133,7 +133,7 @@ class CouchDB
             '_rev' => '_rev: doc._rev'
         );
         foreach($document as $propName => $value) {
-            $conditionParts[] = 'doc.' . $propName;
+            $conditionParts[] = 'doc.' . $propName . ' != undefined';
             $emitetValues[$propName] = $propName . ': doc.' . $propName;
         }
 

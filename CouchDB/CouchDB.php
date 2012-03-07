@@ -27,6 +27,7 @@ use \NetCore\CouchDB\Config;
 use \NetCore\Renderer;
 use \NetCore\Configurable\DynamicObject\Writer;
 use \NetCore\CouchDB\Exception\WrongRequest;
+use \NetCore\CouchDB\Exception\InitViewError;
 
 /**
  * @author: Sel <s@finalclass.net>
@@ -125,7 +126,7 @@ class CouchDB
     public function initView(array $document, $designDocumentName = '_design/common', $viewName = null)
     {
         if(empty($document)) {
-            throw new \NetCore\CouchDB\Exception\InitViewError('document should have at least one key');
+            throw new InitViewError('document should have at least one key');
         }
         $conditionParts = array();
         $emitetValues = array(

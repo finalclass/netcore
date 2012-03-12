@@ -124,11 +124,13 @@ class ShrinkText implements \Zend_Filter_Interface {
 	 */
 	public function filter($text) {
 		$length = $this->getLength();
-		if ($length > strlen($text))
+		if ($length > strlen($text)) {
 			return $text;
+        }
 
-		while ($text[$length] != ' ' && $length != 0)
+		while ($text[$length] != ' ' && $length != 0) {
 			$length--;
+        }
 
 		return mb_substr($text, 0, $length) . $this->getSuffixText();
 	}

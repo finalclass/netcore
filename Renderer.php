@@ -24,6 +24,8 @@ SOFTWARE.
 
 namespace NetCore;
 
+use \NetCore\Configurable\StaticConfigurator;
+
 /**
  * @author: Sel <s@finalclass.net>
  * @date: 23.01.12
@@ -52,21 +54,42 @@ class Renderer
         return $out;
     }
 
+    static public function renderObjectProperty($object, $property)
+    {
+        if (is_array($object)) {
+            return isset($record[$property]) ? $record[$property] : '';
+        } else if (is_object($object) && isset($object->$property)) {
+            return isset($object->$property) ? $object->$property : '';
+        }
+
+        $getterCamelCased = 'get' . StaticConfigurator::toPascalCased($property);
+        if (method_exists($object, $getterCamelCased)) {
+            return $object->$getterCamelCased();
+        }
+
+        $getter_underscored = 'get_' . StaticConfigurator::toUnderscored($property);
+        if (method_exists($object, $getter_underscored)) {
+            return $object->$getter_underscored();
+        }
+
+        return '';
+    }
+
     static public function removeTag($tagName, $string)
     {
         $string = trim($string);
         $maxLen = strlen($string);
         $startPosition = 0;
 
-        for($pos = strlen('<' . $tagName)-1; $pos < $maxLen; $pos++) {
-            if(isset($string[$pos]) && $string[$pos] == '>') {
-                $startPosition = $pos+1;
+        for ($pos = strlen('<' . $tagName) - 1; $pos < $maxLen; $pos++) {
+            if (isset($string[$pos]) && $string[$pos] == '>') {
+                $startPosition = $pos + 1;
                 break;
             }
         }
 
         $endPosition = strrpos($string, '</' . $tagName);
-        if($endPosition === false) {
+        if ($endPosition === false) {
             return substr($string, $startPosition);
         }
         return substr($string, $startPosition, $endPosition - $startPosition);

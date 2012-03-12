@@ -229,6 +229,11 @@ class Loader
         return '/' . join('/', $this->currentPathExploded);
     }
 
+    public function getFileContents()
+    {
+        return file_get_contents($this->getFullPath());
+    }
+
     public function getFullPath()
     {
         $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir . $this->getPath());

@@ -66,7 +66,7 @@ class CouchDB
         return $this->config;
     }
 
-    private function getUrl()
+    public function getUrl()
     {
         $cfg = $this->config;
         return 'http://' . $cfg->getUser() . ':' . $cfg->getPassword()

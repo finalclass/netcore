@@ -35,6 +35,7 @@ class Router
         $this->routes[$name] = new Route($name, $pattern, $operations, $params);
         $this->sortedByStaticLength = null;
         $this->sortedByNumberOfParams = null;
+
         return $this;
     }
 

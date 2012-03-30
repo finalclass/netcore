@@ -21,40 +21,57 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-
-namespace NetCore;
-
-use \NetCore\ViewCompiler\Exception\ReadViewFileException;
-
+namespace NetCore\ViewCompiler\ViewReflection;
 /**
  * @author: Sel <s@finalclass.net>
  * @date: 30.03.12
- * @time: 12:32
+ * @time: 17:06
  */
-class ViewCompiler
+class MetadataTagDefinition
 {
 
+	/** @var string */
+	private $tagName;
+
 	/**
-	 * @param $filePath
-	 * @return string
-	 * @throws \NetCore\ViewCompiler\Exception\ReadViewFileException
+	 * key=>value hash with metadata tag properties
+	 *
+	 * @var array
 	 */
-	public function compileFile($filePath)
+	private $properties;
+
+	/** @var string */
+	private $defaultProperty;
+
+	public function __construct($tagName, $properties = array(), $defaultProperty = '')
 	{
-		$content = @file_get_contents($filePath);
-		if($content === false) {
-			throw new ReadViewFileException('File does not exists ' . $filePath);
-		}
-		return $this->compile($content);
+		$this->tagName = @(string)$tagName;
+		$this->properties = @(array)$properties;
+		$this->defaultProperty = @(string)$defaultProperty;
 	}
 
 	/**
-	 * @param $inputString
-	 * @return string returns the contents of compiled class
+	 * @return string
 	 */
-	public function compile($inputString)
+	public function getTagName()
 	{
-		$reflection = new \NetCore\ViewCompiler\ViewReflection($inputString);
+		return $this->tagName;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getProperties()
+	{
+		return $this->properties;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultProperty()
+	{
+		return $this->defaultProperty;
 	}
 
 }

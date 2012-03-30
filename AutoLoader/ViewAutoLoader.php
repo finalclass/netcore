@@ -94,7 +94,7 @@ class ViewAutoLoader extends AbstractAutoLoader
 		$viewClassContent = $viewCompiler->compileFile($inFilePath);
 		$dir = dirname($outFilePath);
 		@mkdir($dir);
-		file_put_contents($outFilePath, $viewClassContent);
+		//file_put_contents($outFilePath, $viewClassContent);
 	}
 
 }

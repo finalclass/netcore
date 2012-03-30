@@ -24,6 +24,11 @@ SOFTWARE.
 namespace NetCore\AutoLoader;
 
 use \NetCore\AutoLoader\AbstractAutoLoader;
+use \NetCore\ViewCompiler;
+use \NetCore\AutoLoader\Exception\NoViewCompilerSpecified;
+
+/*require_once __DIR__ . '/AbstractAutoLoader.php';
+require_once __DIR__ . '/../ViewCompiler/ViewCompiler.php';*/
 
 /**
  * @author: Sel <s@finalclass.net>
@@ -33,9 +38,63 @@ use \NetCore\AutoLoader\AbstractAutoLoader;
 class ViewAutoLoader extends AbstractAutoLoader
 {
 
-	static public function autoload($className)
-	{
+	/** @var \NetCore\ViewCompiler */
+	private $viewCompiler;
 
+	public function autoload($className)
+	{
+		$classNameDirNotation = str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $className);
+		foreach ($this->getIncludePaths() as $dir => $bool) {
+			$noExtensionPath = $dir . DIRECTORY_SEPARATOR . $classNameDirNotation;
+			$viewPath = $noExtensionPath . '.phtml';
+			$compiledPath = $noExtensionPath . '.php';
+
+			$lastViewModification = @filemtime($viewPath); //false is return if file does not exists
+			$lastCompiledModification = @filemtime($compiledPath); //false is return if file does not exists
+
+			if ($lastCompiledModification > $lastViewModification) {
+				//here is hidden condition: this will only occure if compiled file exists
+				require_once $compiledPath;
+				return true;
+			}
+
+			if ($lastViewModification !== false) { //this means: if view file exists
+				$this->compile($viewPath, $compiledPath);
+				require_once $compiledPath;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param \NetCore\ViewCompiler $value
+	 * @return \NetCore\AutoLoader\ViewAutoLoader
+	 */
+	public function setViewCompiler(ViewCompiler $value)
+	{
+	    $this->viewCompiler = $value;
+	    return $this;
+	}
+
+	/**
+	 * @return \NetCore\ViewCompiler
+	 */
+	public function getViewCompiler()
+	{
+	    return $this->viewCompiler;
+	}
+
+	private function compile($inFilePath, $outFilePath)
+	{
+		$viewCompiler = $this->getViewCompiler();
+		if(!$viewCompiler) {
+			throw new NoViewCompilerSpecified('No view compiler specified!');
+		}
+		$viewClassContent = $viewCompiler->compileFile($inFilePath);
+		$dir = dirname($outFilePath);
+		@mkdir($dir);
+		file_put_contents($outFilePath, $viewClassContent);
 	}
 
 }

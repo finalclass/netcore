@@ -1,7 +1,9 @@
 <?php
 
-namespace NetCore;
+namespace NetCore\AutoLoader;
 use \NetCore\AutoLoader\AbstractAutoLoader;
+
+require_once 'AbstractAutoLoader.php';
 
 /**
  * Author: Sel <s@finalclass.net>
@@ -13,13 +15,22 @@ class ClassAutoLoader extends AbstractAutoLoader
 
     public function autoload($className)
     {
-        foreach (self::getIncludePaths() as $dir => $bool) {
-            $filePath = $dir . DIRECTORY_SEPARATOR
-                        . str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $className)
-                        . '.php';
+	    $classNameDirNotation = str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $className);
+	    $classNameExploded = explode(DIRECTORY_SEPARATOR, $classNameDirNotation);
+	    $classNameLastPart = end($classNameExploded);
+        foreach ($this->getIncludePaths() as $dir => $bool) {
+	        $noExtensionPath = $dir . DIRECTORY_SEPARATOR . $classNameDirNotation;
+            $filePath = $noExtensionPath . '.php';
 
             if (file_exists($filePath)) {
                 require_once $filePath;
+                return true;
+            }
+
+	        $longStyleFilePath = $noExtensionPath . DIRECTORY_SEPARATOR . $classNameLastPart . '.php';
+
+	        if (file_exists($longStyleFilePath)) {
+                require_once $longStyleFilePath;
                 return true;
             }
         }

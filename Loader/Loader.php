@@ -269,32 +269,6 @@ class Loader
         return array('options' => $totalOptions, 'allowed' => end($allowed));
     }
 
-    static public function loadClass($dir, $className)
-    {
-        $dir = $dir . str_replace(array('/', '\\', '_'), '/', $className);
-        $dirExploded = explode('/', $dir);
-        $filePath = $dir . '/' . end($dirExploded) . '.php';
-        $oldStyleFilePath = join(DIRECTORY_SEPARATOR, $dirExploded) . '.php';
-        if (file_exists($filePath)) {
-            require_once $filePath;
-            return true;
-        } else if (file_exists($oldStyleFilePath)) {
-            require_once  $oldStyleFilePath;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function registerAutoloader()
-    {
-        $dir = $this->getDir();
-        spl_autoload_register(function($className) use($dir)
-        {
-            return Loader::loadClass($dir, $className);
-        });
-    }
-
     public function create()
     {
         $config = $this->config();
@@ -302,7 +276,6 @@ class Loader
             throw new NotAllowed();
         }
         $className = '\\' . join('\\', $this->currentPathExploded);
-        self::loadClass($this->getDir(), $className);
         return new $className($config['options']);
     }
 

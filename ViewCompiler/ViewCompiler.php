@@ -22,69 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-namespace NetCore\AutoLoader;
+namespace NetCore;
+
+use \NetCore\ViewCompiler\Exception\ReadViewFileException;
 
 /**
  * @author: Sel <s@finalclass.net>
  * @date: 30.03.12
- * @time: 10:56
+ * @time: 12:32
  */
-abstract class AbstractAutoLoader
+class ViewCompiler
 {
 
-	private $paths = array();
-
 	/**
-	 * @param $path
-	 * @return AbstractAutoLoader
+	 * @param $filePath
+	 * @return string
+	 * @throws \NetCore\ViewCompiler\Exception\ReadViewFileException
 	 */
-	public function addIncludePath($path)
+	public function compileFile($filePath)
 	{
-		$this->paths[$path] = true;
-		return $this;
+		$content = @file_get_contents($filePath);
+		if($content === false) {
+			throw new ReadViewFileException('File does not exists ' . $filePath);
+		}
+		return $this->compile($content);
 	}
 
 	/**
-	 * @param $path
-	 * @return AbstractAutoLoader
+	 * @param $inputString
+	 * @return string returns the contents of compiled class
 	 */
-	public function removeIncludePath($path)
+	public function compile($inputString)
 	{
-		unset($this->paths[$path]);
-		return $this;
-	}
 
-	/**
-	 * @return array
-	 */
-	public function getIncludePaths()
-	{
-		return $this->paths;
 	}
-
-	/**
-	 * @return AbstractAutoLoader
-	 */
-	public function register()
-	{
-		\spl_autoload_register(array($this, 'autoload'));
-		return $this;
-	}
-
-	/**
-	 * @return AbstractAutoLoader
-	 */
-	public function unregister()
-	{
-		\spl_autoload_unregister(array($this, 'autoload'));
-		return $this;
-	}
-
-	/**
-	 * @abstract
-	 * @param $className
-	 * @return boolean
-	 */
-	abstract public function autoload($className);
 
 }

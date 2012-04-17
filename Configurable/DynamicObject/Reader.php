@@ -36,6 +36,11 @@ class Reader
         return (array) $this->target;
     }
 
+    public function toArray()
+    {
+        return $this->getArray();
+    }
+
     public function getInt() {
         if(is_array($this->target)) {
             return 0;

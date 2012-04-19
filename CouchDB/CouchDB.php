@@ -94,7 +94,9 @@ class CouchDB
 
     public function put($id, $rev, array $document)
     {
-        $document['_rev'] = $rev;
+        if($rev) {
+            $document['_rev'] = $rev;
+        }
         return $this->request($this->getUrl() . '/' . $id, \Zend_Http_Client::PUT, $document);
     }
 
@@ -161,6 +163,8 @@ class CouchDB
         }
 
         $existingDoc->views->$viewName->map = $view;
+
+
 
         return $this->put($designDocumentName, (string)@$existingDoc->_rev->getString(), $existingDoc->getArray());
     }

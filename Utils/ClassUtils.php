@@ -20,11 +20,38 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ */
+
+namespace NetCore\Utils;
+
+/**
  * @author: Sel <s@finalclass.net>
  * @date: 20.03.12
  * @time: 09:07
  */
 class ClassUtils
 {
+
+    static public function getAncestorsClass($className)
+    {
+        $father = get_parent_class($className);
+        $ancestors = array();
+        if ($father != '') {
+            $ancestors = self::getAncestorsClass($father);
+            $ancestors[] = $father;
+        }
+        return $ancestors;
+    }
+
+    static public function getAncestorsClassUntil($className, $oldestAncestorClassName)
+    {
+        $father = get_parent_class($className);
+        $ancestors = array();
+        if ($father != '' && is_a($father, $oldestAncestorClassName)) {
+            $ancestors = self::getAncestorsClassUntil($father, $oldestAncestorClassName);
+            $ancestors[] = $father;
+        }
+        return $ancestors;
+    }
 
 }

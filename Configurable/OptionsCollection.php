@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-namespace NetBricks\Common\HeaderConfig;
+namespace NetCore\Configurable;
 
 use \NetCore\Configurable\OptionsAbstract;
 /**
@@ -29,19 +29,44 @@ use \NetCore\Configurable\OptionsAbstract;
  * @date: 20.03.12
  * @time: 13:02
  */
-class Scripts extends OptionsAbstract
+class OptionsCollection extends OptionsAbstract
 {
+
+    protected $maxSort = 0;
+    protected $minSort = -1;
+    protected $isDirty = false;
+
 
     public function append($filePath)
     {
-        $this->options[] = $filePath;
+        $this->set($this->maxSort++, $filePath);
         return $this;
     }
 
     public function prepend($filePath)
     {
-        array_unshift($this->options, $filePath);
+        $this->set($this->minSort--, $filePath);
         return $this;
+    }
+
+    /**
+     * WARNING
+     * You are not changing maxSort and minSort!!!
+     *
+     * @param $position
+     * @param $filePath
+     * @return OptionsCollection
+     */
+    protected function set($position, $filePath)
+    {
+        $this->isDirty = true;
+        $this->options[$position] = $filePath;
+        return $this;
+    }
+
+    public function addJQuery()
+    {
+        return $this->set('/NetBricks/Common/js/jquery.js', -100);
     }
 
     public function has($filePath)
@@ -69,8 +94,10 @@ class Scripts extends OptionsAbstract
 
     public function getUnique()
     {
-        return array_unique($this->options);
+        if($this->isDirty) {
+            $this->options = array_unique($this->options);
+            ksort($this->options);
+        }
+        return $this->options;
     }
-
-
 }

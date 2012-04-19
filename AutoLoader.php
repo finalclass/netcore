@@ -31,6 +31,7 @@ class AutoLoader
     {
         \spl_autoload_unregister('\NetCore\Autoloader::autoload');
     }
+
     static public function autoload($className)
     {
         foreach (self::$paths as $dir => $bool) {

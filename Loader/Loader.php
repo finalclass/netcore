@@ -160,6 +160,13 @@ class Loader
 
     public function find($path)
     {
+        if(is_string($path)) {
+            $questionMarkPos = strpos($path, '?');
+            if($questionMarkPos !== false) {
+                $path = substr($path, 0, $questionMarkPos);
+            }
+        }
+
         if (is_object($path)) {
             $path = '/' . get_class($path);
         }

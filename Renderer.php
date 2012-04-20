@@ -57,7 +57,7 @@ class Renderer
     static public function renderObjectProperty($object, $property)
     {
         if (is_array($object)) {
-            return isset($record[$property]) ? $record[$property] : '';
+            return isset($object[$property]) ? $object[$property] : '';
         } else if (is_object($object) && isset($object->$property)) {
             return isset($object->$property) ? $object->$property : '';
         }

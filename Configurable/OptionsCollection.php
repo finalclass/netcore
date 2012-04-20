@@ -39,13 +39,13 @@ class OptionsCollection extends OptionsAbstract
 
     public function append($filePath)
     {
-        $this->set($this->maxSort++, $filePath);
+        $this->set($this->maxSort++, (string)$filePath);
         return $this;
     }
 
     public function prepend($filePath)
     {
-        $this->set($this->minSort--, $filePath);
+        $this->set($this->minSort--, (string)$filePath);
         return $this;
     }
 
@@ -60,14 +60,11 @@ class OptionsCollection extends OptionsAbstract
     protected function set($position, $filePath)
     {
         $this->isDirty = true;
-        $this->options[$position] = $filePath;
+        $this->options[$position] = (string)$filePath;
         return $this;
     }
 
-    public function addJQuery()
-    {
-        return $this->set('/NetBricks/Common/js/jquery.js', -100);
-    }
+
 
     public function has($filePath)
     {
@@ -81,6 +78,7 @@ class OptionsCollection extends OptionsAbstract
 
     public function remove($filePath)
     {
+        $filePath = (string)$filePath;
         $count = count($this->options);
         for($i = 0; $i < $count; $i++) {
             $current = $this->options[$i];

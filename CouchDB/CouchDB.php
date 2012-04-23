@@ -110,6 +110,8 @@ class CouchDB
     public function save(array $document)
     {
         if(empty($document['_id']) || empty($document['_rev'])) {
+            unset($document['_id']);
+            unset($document['_rev']);
             $response = $this->post($document);
         } else {
             $response = $this->put($document['_id'], $document['_rev'], $document);

@@ -116,6 +116,15 @@ class Reader
         return '';
     }
 
+    /**
+     * @param array $valueToCompare
+     * @return bool|int|mixed|string
+     */
+    public function isOneOf($valueToCompare)
+    {
+        return array_search($this->target, $valueToCompare) !== false;
+    }
+
     public function __invoke($name, $default = '')
     {
         if(!is_string($name)) {

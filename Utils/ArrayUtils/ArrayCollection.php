@@ -21,42 +21,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-namespace NetCore\Configurable;
-
-use \NetCore\Configurable\OptionsAbstract;
-use \NetCore\Utils\ArrayUtils\ArrayCollection;
+namespace NetCore\Utils\ArrayUtils;
 
 /**
  * @author: Sel <s@finalclass.net>
- * @date: 20.03.12
- * @time: 13:02
+ * @date: 23.04.12
+ * @time: 14:58
  */
-class OptionsCollection extends ArrayCollection
+class ArrayCollection implements \IteratorAggregate, \ArrayAccess, \Serializable, \Countable
 {
 
+    protected $options = array();
     protected $maxSort = 0;
     protected $minSort = -1;
     protected $isDirty = false;
 
-    public function __construct($options = array())
+    public function __construct(&$options = array())
     {
-        if ($options instanceof Reader) {
-            $options = $options->getValue();
-        }
-        $this->setOptions($options);
+        $this->options = &$options;
     }
 
-    public function setOptions($options = array())
-    {
-        StaticConfigurator::setOptions($this, $options);
-        return $this;
-    }
-
-    public function getOptions()
+    public function toArray()
     {
         return $this->options;
     }
-
 
     public function append($filePath)
     {
@@ -76,7 +64,7 @@ class OptionsCollection extends ArrayCollection
      *
      * @param $position
      * @param $filePath
-     * @return OptionsCollection
+     * @return \NetCore\Utils\ArrayCollection
      */
     protected function set($position, $filePath)
     {
@@ -118,4 +106,81 @@ class OptionsCollection extends ArrayCollection
         }
         return $this->options;
     }
+
+    /**
+     * Traversable
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->options);
+    }
+
+    /**
+     * ArrayAccess
+     * @param string $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->options[$offset]);
+    }
+
+    /**
+     * ArrayAccess
+     * @param string $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->options[$offset];
+    }
+
+    /**
+     * ArrayAccess
+     * @param string $offset
+     * @param $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->options[$offset] = $value;
+    }
+
+    /**
+     * ArrayAccess
+     * @param string $offset
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->options[$offset]);
+    }
+
+    /**
+     * Serializable
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize($this->options);
+    }
+
+    /**
+     * Serializable
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        $this->options = unserialize($serialized);
+    }
+
+    /**
+     * Countable
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->options);
+    }
+
+
 }

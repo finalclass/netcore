@@ -26,7 +26,7 @@ namespace NetCore\Utils;
 
 class Words {
 
-    static public function GenerateWord($length = 8)
+    static public function generateWord($length = 8)
     {
         static $consonants = array('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w' ,'x', 'z');
         static $vowels = array('a', 'e', 'i', 'o', 'u', 'y');

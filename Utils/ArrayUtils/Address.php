@@ -111,7 +111,7 @@ class Address
 
     /**
      * @param string $value
-     * @return \NetBricks\Common\Document\Address
+     * @return \NetCore\Utils\ArrayUtils\Address
      */
     public function setCountry($value)
     {

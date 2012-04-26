@@ -189,7 +189,8 @@ class Loader
 
     public function __toString()
     {
-        return $this->isStaticResource() ? $this->getPath() : $this->getFullPath();
+        return $this->isStaticResource()
+                ? (string)$this->getPath() : (string)$this->getFullPath();
     }
 
     /**

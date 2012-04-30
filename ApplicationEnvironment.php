@@ -40,34 +40,12 @@ class ApplicationEnvironment
 
     public function __get($varName)
     {
-        $varName = @(string)$varName;
-        if (!isset($varName[2])) {
-            return false;
-        }
-        if ($varName[0] != 'i' && $varName[1] != 's') {
-            return false;
-        }
-
-        $envText = substr($varName, 2);
-
-        return $this->is($envText);
+        return $this->is( @substr((string)$varName, 2) );
     }
 
     public function __set($varName, $value)
     {
-        $varName = @(string)$varName;
-        if (!$value) {
-            $this->applicationEnv = 'development';
-        }
-        if (!isset($varName[2])) {
-            return;
-        }
-        if ($varName[0] != 'i' && $varName[1] != 's') {
-            return;
-        }
-
-        $envText = substr($varName, 2);
-        $this->set($varName);
+        $this->set( @substr((string)$varName, 2) );
     }
 
     public function set($value)

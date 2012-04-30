@@ -62,7 +62,7 @@ class Loader
         'gif' => 'image/gif',
         'png' => 'image/png',
         'jpeg' => 'image/jpg',
-        'jpg' => 'image/jpg',
+        'jpg' => 'image/jpeg',
         'css' => 'text/css',
         'js' => 'application/javascript',
         'ttf' => 'application/octet-stream',

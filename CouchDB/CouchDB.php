@@ -43,11 +43,15 @@ class CouchDB
     /** @var \NetCore\CouchDB\Config */
     private $config;
 
+    private $authSession = '';
+
     public function __construct(Config $config = null)
     {
-        $this->request = new \Zend_Http_Client();
+        $this->request = new \Zend_Http_Client(null, array(
+            'keepalive' => true));
         $this->request->setHeaders('Content-Type', 'application/json');
         $this->config = $config ? $config : new Config();
+        $this->request->setCookieJar(true);
     }
 
     /**
@@ -69,17 +73,42 @@ class CouchDB
     public function getUrl()
     {
         $cfg = $this->config;
-        return 'http://' . $cfg->getUser() . ':' . $cfg->getPassword()
-                . '@' . $cfg->getHost() . ':' . $cfg->getPort()
+        return 'http://' . $cfg->getHost() . ':' . $cfg->getPort()
                 . '/' . $cfg->getDatabase();
+    }
+
+    public function isAuthenticated()
+    {
+        return $this->request->getCookieJar()
+                ->getCookie('http://' . $this->config->getHost() . ':' . $this->config->getPort(), 'AuthSession')
+                !== false;
     }
 
     public function request($url, $type = \Zend_Http_Client::GET, $document = null)
     {
+        if(!$this->isAuthenticated()) {
+            $this->authenticate();
+        }
         return json_decode($this->request->setUri($url)
+            ->resetParameters()
             ->setRawData($document ? json_encode($document) : '')
             ->request($type)
             ->getBody(), true);
+    }
+
+    public function authenticate($user = null, $password = null)
+    {
+        $cfg = $this->config;
+        $user = $user ? $user : $cfg->getUser();
+        $password = $password ? $password : $cfg->getPassword();
+        $url = 'http://' . $cfg->getHost() . ':' . $cfg->getPort() . '/_session';
+        $response = $this->request->setUri($url)
+            ->setHeaders('Content-Type', 'application/x-www-form-urlencoded')
+            ->setRawData("name=$user&password=$password")
+            ->request(\Zend_Http_Client::POST);
+
+        $this->request->setHeaders('Content-Type', 'application/json');
+        return json_decode($response->getBody(), true);
     }
 
     public function get($id)

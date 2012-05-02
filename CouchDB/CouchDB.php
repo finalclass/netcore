@@ -47,11 +47,9 @@ class CouchDB
 
     public function __construct(Config $config = null)
     {
-        $this->request = new \Zend_Http_Client(null, array(
-            'keepalive' => true));
-        $this->request->setHeaders('Content-Type', 'application/json');
-        $this->config = $config ? $config : new Config();
+        $this->request = new \Zend_Http_Client(null, array('keepalive' => true));
         $this->request->setCookieJar(true);
+        $this->config = $config ? $config : new Config();
     }
 
     /**
@@ -86,14 +84,16 @@ class CouchDB
 
     public function request($url, $type = \Zend_Http_Client::GET, $document = null)
     {
-        if(!$this->isAuthenticated()) {
+        if (!$this->isAuthenticated()) {
             $this->authenticate();
         }
+
         return json_decode($this->request->setUri($url)
-            ->resetParameters()
-            ->setRawData($document ? json_encode($document) : '')
-            ->request($type)
-            ->getBody(), true);
+                ->resetParameters()
+                ->setHeaders('Content-Type', 'application/json')
+                ->setRawData($document ? json_encode($document) : '')
+                ->request($type)
+                ->getBody(), true);
     }
 
     public function authenticate($user = null, $password = null)
@@ -102,12 +102,13 @@ class CouchDB
         $user = $user ? $user : $cfg->getUser();
         $password = $password ? $password : $cfg->getPassword();
         $url = 'http://' . $cfg->getHost() . ':' . $cfg->getPort() . '/_session';
-        $response = $this->request->setUri($url)
-            ->setHeaders('Content-Type', 'application/x-www-form-urlencoded')
-            ->setRawData("name=$user&password=$password")
-            ->request(\Zend_Http_Client::POST);
 
-        $this->request->setHeaders('Content-Type', 'application/json');
+        $response = $this->request->setUri($url)
+                ->resetParameters()
+                ->setHeaders('Content-Type', 'application/x-www-form-urlencoded')
+                ->setRawData("name=$user&password=$password")
+                ->request(\Zend_Http_Client::POST);
+
         return json_decode($response->getBody(), true);
     }
 
@@ -123,7 +124,7 @@ class CouchDB
 
     public function put($id, $rev, array $document)
     {
-        if($rev) {
+        if ($rev) {
             $document['_rev'] = $rev;
         }
         return $this->request($this->getUrl() . '/' . $id, \Zend_Http_Client::PUT, $document);
@@ -138,16 +139,16 @@ class CouchDB
      */
     public function save(array $document)
     {
-        if(empty($document['_id']) || empty($document['_rev'])) {
+        if (empty($document['_id'])) {
             unset($document['_id']);
             unset($document['_rev']);
             $response = $this->post($document);
         } else {
-            $response = $this->put($document['_id'], $document['_rev'], $document);
+            $response = $this->put($document['_id'], @ $document['_rev'], $document);
         }
 
-        $document['_id'] = (string) (isset($response['id']) ? $response['id'] : @$response['_id']);
-        $document['_rev'] = (string) (isset($response['rev']) ? $response['rev'] : @$response['_rev']);
+        $document['_id'] = (string)(isset($response['id']) ? $response['id'] : @$response['_id']);
+        $document['_rev'] = (string)(isset($response['rev']) ? $response['rev'] : @$response['_rev']);
         return $document;
     }
 
@@ -156,9 +157,9 @@ class CouchDB
         return $this->request($this->getUrl() . '/' . $id . '?rev=' . $rev, \Zend_Http_Client::DELETE);
     }
 
-    public function initView(array $document, $designDocumentName = '_design/common', $viewName = null)
+    public function initView(array $document, $designDocumentName = '_design/common', $viewName = null, $key = 'doc._id')
     {
-        if(empty($document)) {
+        if (empty($document)) {
             throw new InitViewError('document should have at least one key');
         }
         $conditionParts = array();
@@ -166,22 +167,22 @@ class CouchDB
             '_id' => '_id: doc._id',
             '_rev' => '_rev: doc._rev'
         );
-        foreach($document as $propName => $value) {
+        foreach ($document as $propName => $value) {
             $conditionParts[] = 'doc.' . $propName . ' != undefined';
             $emitetValues[$propName] = $propName . ': doc.' . $propName;
         }
 
         $view =
-        'function(doc) {
-            if(' . join(' && ', $conditionParts) .') {
-                emit(doc._id, { ' . join(', ', $emitetValues) . '});
+                'function(doc) {
+            if(' . join(' && ', $conditionParts) . ') {
+                emit(' . $key . ', { ' . join(', ', $emitetValues) . '});
             }
         }';
 
-        $rawExistingDoc= $this->get($designDocumentName);
+        $rawExistingDoc = $this->get($designDocumentName);
         $existingDoc = new Writer($rawExistingDoc);
 
-        if(@$existingDoc->error == 'not_found') {
+        if (@$existingDoc->error == 'not_found') {
             return $this->put($designDocumentName, '', array(
                 'views' => array(
                     $viewName => array(
@@ -189,12 +190,11 @@ class CouchDB
                     ))));
         }
 
-        if($existingDoc->error->exists()) {
+        if ($existingDoc->error->exists()) {
             throw new \NetCore\CouchDB\Exception\DesignDocumentError((string)$existingDoc->error);
         }
 
         $existingDoc->views->$viewName->map = $view;
-
 
 
         return $this->put($designDocumentName, (string)@$existingDoc->_rev->getString(), $existingDoc->getArray());

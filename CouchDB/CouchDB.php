@@ -122,6 +122,21 @@ class CouchDB
         return $this->request($this->getUrl(), \Zend_Http_Client::POST, $document);
     }
 
+    public function findByKeys($keys, $includeDocs = true, $descending = true, $limit = null)
+    {
+        $addr = $this->getUrl() . '/_all_docs?';
+        if($includeDocs) {
+            $addr .= 'include_docs=true&';
+        }
+        if($descending) {
+            $addr .= 'descending=true&';
+        }
+        if($limit) {
+            $addr .= 'limit=' . intval($limit) . '&';
+        }
+        return $this->request($addr, \Zend_Http_Client::POST, array('keys' => $keys));
+    }
+
     public function put($id, $rev, array $document)
     {
         if ($rev) {

@@ -43,9 +43,9 @@ class Route implements \Zend_Filter_Interface {
 
         $filter = new \Zend_Filter();
         $filter->addFilter(new \Zend_Filter_StringToLower())
-                ->addFilter(new \Zend_Filter_PregReplace('#(~[a-zA-Z0-9\-])#i', ''));
+                ->addFilter(new \Zend_Filter_PregReplace('#([^a-zA-Z0-9\-])#i', ''));
 
-        $array = explode(" ", $value);
+        $array = explode(' ', $value);
         $count = count($array);
         $i = 0;
         $string = '';

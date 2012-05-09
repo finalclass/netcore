@@ -47,7 +47,7 @@ class ClassUtils
     {
         $father = get_parent_class($className);
         $ancestors = array();
-        if ($father != '' && is_a($father, $oldestAncestorClassName)) {
+        if ($father != '' && is_subclass_of($father, $oldestAncestorClassName)) {
             $ancestors = self::getAncestorsClassUntil($father, $oldestAncestorClassName);
             $ancestors[] = $father;
         }

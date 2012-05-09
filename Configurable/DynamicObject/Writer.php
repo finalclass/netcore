@@ -19,7 +19,6 @@ class Writer extends Reader
 
     public function __get($name)
     {
-
         if(is_string($this->target)) {
             return $this;
         }

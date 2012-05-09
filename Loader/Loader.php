@@ -307,7 +307,7 @@ class Loader
     {
         $config = $this->config();
         if (!$this->isAnyRoleAllowed($config['allowed'])) {
-            throw new NotAllowed();
+            throw new NotAllowed('Not allowed for resource: ' . $this->getPath());
         }
         $className = '\\' . join('\\', $this->currentPathExploded);
         self::loadClass($this->getDir(), $className);

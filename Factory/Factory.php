@@ -1,6 +1,6 @@
 <?php
 
-namespace NetCore\Factory;
+namespace NetCore;
 
 use \NetCore\Configurable\OptionsAbstract;
 use \NetCore\Factory\Exception\InvalidSubFactory;
@@ -49,7 +49,7 @@ class Factory extends OptionsAbstract
 
     /**
      * @param array $value
-     * @return \NetBricks\Factory
+     * @return \NetCore\Factory
      */
     public function setAllowed($value = array())
     {
@@ -65,7 +65,8 @@ class Factory extends OptionsAbstract
      */
     public function getAllowed()
     {
-        return empty($this->options['allowed']) ? array() : $this->options['allowed'];
+        $allowed = empty($this->options['allowed']) ? array() : $this->options['allowed'];
+        return array_merge($allowed, $this->getInheritedAllowed());
     }
 
    /**
@@ -98,7 +99,7 @@ class Factory extends OptionsAbstract
 
     /**
      * @param array $value
-     * @return \NetCore\Factory\Factory
+     * @return \NetCore\Factory
      */
     public function setInherited($value)
     {
@@ -124,7 +125,7 @@ class Factory extends OptionsAbstract
 
     /**
      * @param $name
-     * @return \NetCore\Factory\Factory
+     * @return \NetCore\Factory
      */
     public function __get($name)
     {
@@ -139,6 +140,10 @@ class Factory extends OptionsAbstract
             $componentOptions['allowed'] = empty($componentOptions['allowed'])
                     ? $this->getAllowed() : $componentOptions['allowed'];
 
+            $componentOptions['inherited_allowed'] = empty($componentOptions['inherited_allowed'])
+                ? $this->getInheritedAllowed()
+                : array_unique(array_merge($componentOptions['inherited_allowed'], $this->getInheritedAllowed()));
+
             $componentOptions['roles'] = empty($componentOptions['roles'])
                     ? $this->getRoles() : $componentOptions['roles'];
 
@@ -147,6 +152,24 @@ class Factory extends OptionsAbstract
             $this->createdSubItems[$name] = new Factory($componentOptions);
         }
         return $this->createdSubItems[$name];
+    }
+
+    /**
+     * @param array $value
+     * @return \NetCore\Factory
+     */
+    public function setInheritedAllowed($value)
+    {
+        $this->options['inherited_allowed'] = (array)$value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getInheritedAllowed()
+    {
+        return (array)@$this->options['inherited_allowed'];
     }
     
     public function __call($name, $arguments = array())
@@ -159,9 +182,10 @@ class Factory extends OptionsAbstract
     }
 
     /**
-     * @throws \InvalidArgumentException
-     * @param $name
-     * @param \NetCore\Factory\Factory $factory
+     *
+     * @param string $name
+     * @param \NetCore\Factory $factory
+     * @throws Factory\Exception\InvalidSubFactory
      * @return void
      */
     public function __set($name, $factory)
@@ -200,7 +224,7 @@ class Factory extends OptionsAbstract
 
     /**
      * @param array $arguments
-     * @return \NetCore\Component\ComponentAbstract
+     * @return object
      * @throws Exception\NotAllowed
      */
     public function __invoke($arguments = array())

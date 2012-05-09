@@ -90,11 +90,10 @@ abstract class Model
      */
     static public function findAll($sortBy = 'id', $direction = 'asc')
     {
-
-        $files = scandir(self::getDir());
+        $files = scandir(static::getDir());
         $array = array();
         foreach ($files as $file) {
-            $filePath = self::getDir() . DIRECTORY_SEPARATOR . $file;
+            $filePath = static::getDir() . DIRECTORY_SEPARATOR . $file;
             if (!is_file($filePath) || substr($filePath, strlen($filePath) - 5) != '.json') {
                 continue;
             }

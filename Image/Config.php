@@ -213,6 +213,7 @@ class Config extends OptionsAbstract
 
     /**
      * @param string $value possible values: jpg, jpeg, png, gif
+     * @throws \NetBricks\Image\Exception\WrongConversionType
      * @return \NetCore\Image\Config
      */
     public function setConvertTo($value)

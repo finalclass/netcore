@@ -36,8 +36,8 @@ class Route implements \Zend_Filter_Interface {
      * @return string
      */
     public static function generate($value) {
-        $chars          = array('ł‚', 'ń', 'ą', 'ę', 'ś', 'ć', 'ó', 'ż', 'ź', 'Ł', 'Ń', 'Ą', 'Ę', 'Ś', 'Ć', 'Ó', 'Ż', 'Ź', '!', '.', ':', ',');
-        $charsChange    = array('l', 'n', 'a', 'e', 's', 'c', 'o', 'z', 'z', 'L', 'N', 'A', 'E', 'S', 'C', 'O', 'Z', 'Z', '', '', '', '');
+        $chars          = array('ł‚', 'ń', 'ą', 'ę', 'ś', 'ć', 'ó', 'ż', 'ź', 'Ł', 'Ń', 'Ą', 'Ę', 'Ś', 'Ć', 'Ó', 'Ż', 'Ź', '!', '.', ':', ',', '-');
+        $charsChange    = array('l',  'n', 'a', 'e', 's', 'c', 'o', 'z', 'z', 'L', 'N', 'A', 'E', 'S', 'C', 'O', 'Z', 'Z', '',  '',  '',  '', ' ');
 
         $value = \Zend_Filter::filterStatic(str_replace($chars, $charsChange, $value), 'StringTrim');
 

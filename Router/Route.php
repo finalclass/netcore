@@ -195,7 +195,7 @@ class Route
         $end = 0;
         $start = 0;
         foreach ($this->pattern as $part) {
-            if ($part[0] == '{') {
+            if ($part[0] == '{') { // is parameter, not static part
                 continue;
             }
             $start = strpos($uri, $part, $end);
@@ -228,8 +228,6 @@ class Route
 
         //now use substr and params offsets array to create params object
         //get params names from the pattern
-
-
 
         $i = 0;
         foreach ($this->pattern as $part) {

@@ -27,6 +27,14 @@ class Router
      */
     private $sortedByNumberOfParams = null;
 
+    public function removeRoute($name)
+    {
+        unset($this->routes[$name]);
+        $this->sortedByNumberOfParams = null;
+        $this->sortedByStaticLength = null;
+        return $this;
+    }
+
     public function addRoute($name, $pattern, $operations = array(), $params = array())
     {
         if (isset($this->routes[$name])) {
@@ -59,6 +67,7 @@ class Router
                 return $route;
             }
         }
+
         return null;
     }
 

@@ -1,5 +1,5 @@
 {
-	"name":"finalclass/NetCore",
+	"name":"finalclass/netcore",
 	"require":{
 		"php":">=5.3.0"
 	},

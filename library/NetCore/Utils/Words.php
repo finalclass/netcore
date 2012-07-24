@@ -56,4 +56,32 @@ class Words
         return mb_substr($text, 0, $length) . $suffix;
     }
 
+    static public function createGuid($value)
+    {
+        $chars = array('ł‚', 'ń', 'ą', 'ę', 'ś', 'ć', 'ó', 'ż', 'ź', 'Ł', 'Ń', 'Ą', 'Ę', 'Ś', 'Ć', 'Ó', 'Ż', 'Ź', '!', '.', ':', ',', '-');
+        $charsChange = array('l', 'n', 'a', 'e', 's', 'c', 'o', 'z', 'z', 'L', 'N', 'A', 'E', 'S', 'C', 'O', 'Z', 'Z', '', '', '', '', ' ');
+
+        $value = trim(str_replace($chars, $charsChange, $value));
+
+        $filter = function($value)
+        {
+            $value = strtolower($value);
+            $value = preg_replace('#([^a-zA-Z0-9\-])#i', '', $value);
+            return $value;
+        };
+
+        $array = explode(' ', $value);
+        $count = count($array);
+        $i = 0;
+        $string = '';
+        foreach ($array as $item) {
+            if (strlen($item) > 0) {
+                $line = ($i < $count - 1) ? '-' : '';
+                $string .= $filter($item) . $line;
+            }
+            $i++;
+        }
+        return (string)$string;
+    }
+
 }

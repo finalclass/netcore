@@ -49,7 +49,7 @@ class Words
             return $text;
         }
 
-        while ($text[$length] != ' ' && $length != 0) {
+        while (!isset($text[$length]) || $text[$length] != ' ' && $length != 0) {
             $length--;
         }
 

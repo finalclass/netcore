@@ -128,6 +128,8 @@ class Image
             $extension = $cfg->getConvertTo();
         }
 
+        $extension = strtolower($extension);
+
         $mime = null;
         switch($extension) {
             case 'jpeg':

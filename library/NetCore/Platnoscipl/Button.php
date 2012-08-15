@@ -12,7 +12,7 @@ class Button
 
     public function __construct($options = array())
     {
-        $this->setOptions($options['platnoscipl']);
+        $this->setOptions($options);
     }
 
     /**
@@ -23,6 +23,13 @@ class Button
     {
         $this->setOptions($options);
         return $this;
+    }
+
+    public function getJavaScriptLink()
+    {
+        return $this->getUrlPlatnosci()
+                . '/UTF/js/' . $this->getPosId() . '/' . substr($this->getKey1(), 0, 2)
+                . '/paytype.js';
     }
 
     /**
@@ -38,13 +45,6 @@ class Button
         }
         \NetCore\Configurable\StaticConfigurator::setOptions($this, $options);
         return $this;
-    }
-
-    public function getJavaScriptLink()
-    {
-        return $this->getUrlPlatnosci()
-                            . '/UTF/js/' . $this->getPosId() . '/' . substr($this->getKey1(), 0, 2)
-                            . '/paytype.js';
     }
 
     public function __toString()
@@ -270,7 +270,7 @@ class Button
     public function getSessionId()
     {
         if (!isset($this->options['session_id'])) {
-            $this->options['session_id'] = md5(Zend_Session::getId() . time());
+            $this->options['session_id'] = md5(session_id() . time());
         }
         return $this->options['session_id'];
     }

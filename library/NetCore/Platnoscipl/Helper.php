@@ -1,9 +1,30 @@
 <?php
+/**
 
-namespace Fasolka\Platnoscipl;
+Copyright (C) Szymon Wygnanski (s@finalclass.net)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
+namespace NetCore\Platnoscipl;
 
 class Helper
-{ 
+{
 
     /**
      * @var array
@@ -74,73 +95,75 @@ class Helper
 
     /**
      * @param array
-     * @return \Fasolka\Platnoscipl\Helper
+     * @return \NetCore\Platnoscipl\Helper
      */
-    public function direct($options = array())
+    public function __construct($options = array())
     {
         \NetCore\Configurable\StaticConfigurator::setOptions($this, $options);
         return $this;
     }
 
+
+
     /**
-     * @return \Fasolka\Platnoscipl\Helper
+     * @return \NetCore\Platnoscipl\Helper
      */
     public function cancelPayment()
     {
         $ts = time();
         $sig = md5($this->posId . $this->sessionId . $ts . $this->key1);
-        $client = new Zend_Http_Client();
+        $client = new \Zend_Http_Client();
         $client->setUri($this->urlPlatnosci . '/UTF/Payment/cancel/txt');
-        $client->setMethod(Zend_Http_Client::POST);
+        $client->setMethod(\Zend_Http_Client::POST);
         $client->setParameterPost(array(
-                                       'pos_id' => $this->posId,
-                                       'session_id' => $this->sessionId,
-                                       'ts' => $ts,
-                                       'sig' => $sig
-                                  ));
+            'pos_id' => $this->posId,
+            'session_id' => $this->sessionId,
+            'ts' => $ts,
+            'sig' => $sig
+        ));
         $this->lastResult = $client->request()->getBody();
         return $this;
     }
 
     /**
-     * @return \Fasolka\Platnoscipl\Helper
+     * @return \NetCore\Platnoscipl\Helper
      */
     public function getPayment()
     {
         $ts = time();
         $sig = md5($this->posId . $this->sessionId . $ts . $this->key1);
 
-        $client = new Zend_Http_Client();
+        $client = new \Zend_Http_Client();
         $client->setUri($this->urlPlatnosci . '/UTF/Payment/get/txt');
-        $client->setMethod(Zend_Http_Client::POST);
+        $client->setMethod(\Zend_Http_Client::POST);
         $client->setParameterPost(array(
-                                       'pos_id' => $this->posId,
-                                       'session_id' => $this->sessionId,
-                                       'ts' => $ts,
-                                       'sig' => $sig
-                                  ));
+            'pos_id' => $this->posId,
+            'session_id' => $this->sessionId,
+            'ts' => $ts,
+            'sig' => $sig
+        ));
 
         $this->lastResult = $client->request()->getBody();
         return $this;
     }
 
     /**
-     * @return \Fasolka\Platnoscipl\Helper
+     * @return \NetCore\Platnoscipl\Helper
      */
     public function confirmPayment()
     {
         $ts = time();
         $sig = md5($this->posId . $this->sessionId . $ts . $this->key1);
 
-        $client = new Zend_Http_Client();
+        $client = new \Zend_Http_Client();
         $client->setUri($this->urlPlatnosci . '/UTF/Payment/confirm/txt');
-        $client->setMethod(Zend_Http_Client::POST);
+        $client->setMethod(\Zend_Http_Client::POST);
         $client->setParameterPost(array(
-                                       'pos_id' => $this->posId,
-                                       'session_id' => $this->sessionId,
-                                       'ts' => $ts,
-                                       'sig' => $sig
-                                  ));
+            'pos_id' => $this->posId,
+            'session_id' => $this->sessionId,
+            'ts' => $ts,
+            'sig' => $sig
+        ));
 
         $this->lastResult = $client->request()->getBody();
         return $this;
@@ -164,12 +187,12 @@ class Helper
      */
     private function responseToArray($string)
     {
-        $filter = new Zend_Filter_StringTrim();
+        $filter = new \Zend_Filter_StringTrim();
         $array = explode("\n", $string);
         $out = array();
         foreach ($array as $line) {
             $lineExploded = explode(':', $line);
-            if(count($lineExploded) != 2) {
+            if (count($lineExploded) != 2) {
                 continue;
             }
             list($key, $val) = $lineExploded;
@@ -256,7 +279,7 @@ class Helper
 
     /**
      * @param string $sessionId
-     * @return \\Fasolka\Platnoscipl\Helper
+     * @return \NetCore\Platnoscipl\Helper
      */
     public function setSessionId($sessionId)
     {
